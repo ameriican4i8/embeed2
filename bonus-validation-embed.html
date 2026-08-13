@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bonus validation</title>
+  <style>
+    :root {
+      --bg: oklch(0.10 0.01 110);
+      --panel: oklch(0.15 0.018 110);
+      --ink: oklch(0.94 0.01 110);
+      --muted: oklch(0.72 0.025 110);
+      --line: oklch(0.32 0.045 110);
+      --signal: oklch(0.76 0.16 132);
+      --accent: oklch(0.68 0.15 48);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      background: transparent;
+      color: var(--ink);
+      font-family: "Segoe UI", system-ui, sans-serif;
+    }
+
+    .ocd-wrap { width: min(100%, 440px); }
+    .ocd-panel {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+      box-shadow: 0 20px 50px oklch(0.02 0 0 / .55);
+    }
+    .ocd-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 15px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .12em;
+    }
+    .ocd-bar-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 13px var(--signal); }
+    .ocd-bar-id { margin-left: auto; color: var(--accent); }
+    .ocd-row { position: relative; display: flex; justify-content: center; gap: 9px; padding: 32px 20px 22px; }
+    .ocd-cell {
+      display: grid;
+      width: 42px;
+      height: 52px;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: oklch(0.12 0.012 110);
+      color: var(--signal);
+      font-size: 26px;
+      font-weight: 800;
+      transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+    }
+    .ocd-cell.is-filled { border-color: var(--signal); box-shadow: 0 0 16px oklch(0.76 0.16 132 / .18); transform: translateY(-2px); }
+    .ocd-digit::before { content: "*"; opacity: 0; }
+    .ocd-cell.is-filled .ocd-digit::before { opacity: 1; }
+    .ocd-scanline { position: absolute; left: 12%; right: 12%; bottom: 9px; height: 1px; background: var(--signal); opacity: .45; animation: scan 1.2s ease-in-out infinite; }
+    .ocd-out { display: flex; align-items: center; min-height: 58px; padding: 0 20px 17px; color: var(--muted); font-size: 15px; }
+    .ocd-prompt { margin-right: 8px; color: var(--signal); font-weight: 800; }
+    .ocd-status { color: var(--ink); }
+    .ocd-cursor { width: 8px; height: 17px; margin-left: 5px; background: var(--signal); animation: blink .75s steps(2) infinite; }
+    .ocd-success { display: none; align-items: center; gap: 10px; padding: 0 20px 22px; color: var(--signal); font-size: 15px; font-weight: 700; }
+    .ocd-success.is-visible { display: flex; }
+    .ocd-check { display: grid; width: 22px; height: 22px; place-items: center; border: 1px solid var(--signal); border-radius: 5px; background: oklch(0.76 0.16 132 / .13); }
+    @keyframes blink { 50% { opacity: 0; } }
+    @keyframes scan { 50% { opacity: .08; transform: scaleX(.7); } }
+    @media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important; } }
+  </style>
+</head>
+<body>
+  <div class="ocd-wrap" role="status" aria-live="polite">
+    <div class="ocd-panel">
+      <div class="ocd-bar"><span class="ocd-bar-dot"></span><span>SECURE CHANNEL // BONUS</span><span class="ocd-bar-id">NODE-7</span></div>
+      <div class="ocd-row" aria-label="Validación en curso">
+        <span class="ocd-cell"><span class="ocd-digit"></span></span><span class="ocd-cell"><span class="ocd-digit"></span></span><span class="ocd-cell"><span class="ocd-digit"></span></span><span class="ocd-cell"><span class="ocd-digit"></span></span><span class="ocd-cell"><span class="ocd-digit"></span></span><span class="ocd-cell"><span class="ocd-digit"></span></span>
+        <span class="ocd-scanline" aria-hidden="true"></span>
+      </div>
+      <div class="ocd-out"><span class="ocd-prompt" aria-hidden="true">&gt;</span><span class="ocd-status">Validando tu bono...</span><span class="ocd-cursor" aria-hidden="true"></span></div>
+      <div class="ocd-success"><span class="ocd-check" aria-hidden="true">✓</span><span>Todo listo. Bono liberado.</span></div>
+    </div>
+  </div>
+  <script>
+    (() => {
+      const cells = [...document.querySelectorAll('.ocd-cell')];
+      const status = document.querySelector('.ocd-status');
+      const success = document.querySelector('.ocd-success');
+      const cursor = document.querySelector('.ocd-cursor');
+      const messages = ['Validando tu bono...', 'Comprobando tu IP...', 'Liberando el bono para tu IP.'];
+      cells.forEach((cell, index) => setTimeout(() => cell.classList.add('is-filled'), 250 + index * 380));
+      setTimeout(() => { status.textContent = messages[1]; }, 1200);
+      setTimeout(() => { status.textContent = messages[2]; }, 2450);
+      setTimeout(() => { success.classList.add('is-visible'); cursor.style.display = 'none'; }, 3800);
+    })();
+  </script>
+</body>
+</html>
